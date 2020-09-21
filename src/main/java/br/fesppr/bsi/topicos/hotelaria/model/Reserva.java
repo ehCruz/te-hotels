@@ -3,6 +3,8 @@ package br.fesppr.bsi.topicos.hotelaria.model;
 import br.fesppr.bsi.topicos.hotelaria.exceptions.HotelariaException;
 import br.fesppr.bsi.topicos.hotelaria.exceptions.ReservaException;
 import br.fesppr.bsi.topicos.hotelaria.model.enums.TipoQuarto;
+import br.fesppr.bsi.topicos.hotelaria.model.utils.pagamento.CartaoCredito;
+import br.fesppr.bsi.topicos.hotelaria.model.utils.pagamento.FormaPagamento;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,11 +28,11 @@ public class Reserva {
     private List<Pagamento> pagamentos = new ArrayList<>();
 
     public Reserva(Hospede hospede, TipoQuarto tipoQuarto) throws HotelariaException {
-        if (hospede == null) {
-            throw new HotelariaException("Hospede não pode ser nulo.");
+        if (hospede != null) {
+            this.hospede = hospede;
+            this.tipoQuarto = tipoQuarto;
         }
-        this.hospede = hospede;
-        this.tipoQuarto = tipoQuarto;
+        throw new HotelariaException("Hospede não pode ser nulo.");
     }
 
     public void solicitarReserva(LocalDate entrada, LocalDate saida) throws ReservaException {
@@ -53,9 +55,19 @@ public class Reserva {
         this.precisaBerco = true;
     }
 
-    private void cancelarReserva() {
-        this.isCancelada = true;
-        // TODO - devolver pagamento
+    public void pagar(FormaPagamento formaPagamento) {
+        // TODO fazer com que pagamento mínimo seja de 30% do valor da reserva
+        Pagamento pagamento = new Pagamento(formaPagamento);
+        pagamento.pagar(valorReserva);
+        this.pagamentos.add(pagamento);
+    }
+
+    private void cancelarReserva() throws ReservaException {
+        if(this.estadia == null) {
+            this.isCancelada = true;
+            // TODO - devolver pagamento
+        }
+        throw new ReservaException("Não é possível cancelar uma reserva após o checkin.");
     }
 
     private void realizarCheckIn() {
@@ -79,11 +91,44 @@ public class Reserva {
         return precisaBerco;
     }
 
+    public BigDecimal getValorReserva() {
+        return valorReserva;
+    }
+
+    public LocalDateTime getHoraEntrada() {
+        return horaEntrada;
+    }
+
+    public void setHoraSaida(LocalDateTime horaSaida) {
+        this.horaSaida = horaSaida;
+    }
+
+    public LocalDateTime getHoraSaida() {
+        return horaSaida;
+    }
+
+    public boolean isCancelada() {
+        return isCancelada;
+    }
+
     public TipoQuarto getTipoQuarto() {
         return tipoQuarto;
+    }
+
+    public Hospede getHospede() {
+        return hospede;
+    }
+
+    public Estadia getEstadia() {
+        return estadia;
     }
 
     public Hotel getHotel() {
         return hotel;
     }
+
+    public List<Pagamento> getPagamentos() {
+        return pagamentos;
+    }
+
 }

@@ -3,6 +3,7 @@ package br.fesppr.bsi.topicos.hotelaria.model;
 import br.fesppr.bsi.topicos.hotelaria.model.enums.Disponibilidade;
 import br.fesppr.bsi.topicos.hotelaria.model.enums.TipoQuarto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ public class Estadia {
 
     public void realizarCheckOut() {
         this.quarto.chekOut();
+        this.reserva.setHoraSaida(LocalDateTime.now());
         // TODO pagamento
     }
 
