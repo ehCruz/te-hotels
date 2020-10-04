@@ -1,20 +1,24 @@
 package br.fesppr.bsi.topicos.hotelaria.model;
 
 import br.fesppr.bsi.topicos.hotelaria.exceptions.HotelariaException;
+import br.fesppr.bsi.topicos.hotelaria.model.enums.Disponibilidade;
 import br.fesppr.bsi.topicos.hotelaria.model.enums.TipoQuarto;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Hotel {
 
     private String nomeFantasia;
     private String cnpj;
     private String regrasHotel;
+    private String telefone;
+    private String email;
     private Endereco endereco;
     private List<Agenda> agenda = new ArrayList<>();
     private List<Reserva> reservas = new ArrayList<>();
-    private List<Contato> contatos = new ArrayList<>();
     private List<Quarto> quartos = new ArrayList<>();
 
     public Hotel(String nomeFantasia, String cnpj) {
@@ -61,16 +65,17 @@ public class Hotel {
         }
     }
 
-    public void adicionarNovoContato(Contato contato) {
-        if (contato != null) {
-            this.contatos.add(contato);
-        }
-    }
-
     public void adicionarQuarto(Quarto quarto) {
         if (quarto != null) {
             this.quartos.add(quarto);
         }
+    }
+
+    public Quarto getQuartoDisponivelFromTipo(TipoQuarto tipoQuarto) throws HotelariaException {
+        return this.getQuartos()
+                .stream()
+                .filter(q -> q.getDisponibilidade().equals(Disponibilidade.DISPONIVEL) && q.getTipoQuarto().equals(tipoQuarto))
+                .findFirst().orElseThrow(HotelariaException::new);
     }
 
     public List<Quarto> getQuartos() {
@@ -91,6 +96,22 @@ public class Hotel {
 
     public void setRegrasHotel(String regrasHotel) {
         this.regrasHotel = regrasHotel;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Endereco getEndereco() {

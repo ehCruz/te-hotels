@@ -6,7 +6,6 @@ import br.fesppr.bsi.topicos.hotelaria.model.Hotel;
 import br.fesppr.bsi.topicos.hotelaria.model.Quarto;
 import br.fesppr.bsi.topicos.hotelaria.model.Reserva;
 import br.fesppr.bsi.topicos.hotelaria.model.enums.TipoQuarto;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,13 +13,12 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.Month;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Hotel Specs")
 public class HotelSpec {
 
-    Hotel hotel;
+    static Hotel hotel;
 
     static Hospede hospede;
     static Reserva reserva1;
@@ -28,31 +26,34 @@ public class HotelSpec {
     static Reserva reserva3;
     static Reserva reservaInvalida;
 
-    @BeforeAll
-    static void setAll() throws HotelariaException {
-        LocalDate nascimento = LocalDate.of(1995, Month.JUNE, 3);
-        hospede = new Hospede("Eduardo", "Cruz", nascimento, "09611848927", "41 99999999", "email@email.com");
-
-        reserva1 = new Reserva(hospede, TipoQuarto.CONFORTO_01);
-        reserva1.solicitarReserva(LocalDate.of(2021, Month.SEPTEMBER, 20),LocalDate.of(2021, Month.SEPTEMBER, 21));
-
-        reserva2 = new Reserva(hospede, TipoQuarto.CONFORTO_01);
-        reserva2.solicitarReserva(LocalDate.of(2021, Month.SEPTEMBER, 26),LocalDate.of(2021, Month.SEPTEMBER, 28));
-
-        reserva3 = new Reserva(hospede, TipoQuarto.CONFORTO_01);
-        reserva3.solicitarReserva(LocalDate.of(2021, Month.OCTOBER, 20),LocalDate.of(2021, Month.OCTOBER, 25));
-
-        reservaInvalida = new Reserva(hospede, TipoQuarto.CONFORTO_01);
-        reservaInvalida.solicitarReserva(LocalDate.of(2021, Month.SEPTEMBER, 20),LocalDate.of(2021, Month.SEPTEMBER, 21));
-    }
-
     @BeforeEach
-    void init() {
-        hotel = new Hotel("ABC", "123456");
+    void init() throws HotelariaException {
+        hotel = new Hotel("HOTEL TESTE", "123456");
 
-        hotel.adicionarQuarto(new Quarto(TipoQuarto.CONFORTO_01));
-        hotel.adicionarQuarto(new Quarto(TipoQuarto.CONFORTO_01));
-        hotel.adicionarQuarto(new Quarto(TipoQuarto.CONFORTO_01));
+        LocalDate nascimento = LocalDate.of(1995, Month.JUNE, 3);
+        hospede = new Hospede();
+        hospede.setNome("Eduardo");
+        hospede.setSobreNome("Cruz");
+        hospede.setDataNascimento(nascimento);
+        hospede.setCpf("09611848927");
+        hospede.setTelefonePrincipal("41 99999999");
+        hospede.setEmail("email@email.com");
+
+        reserva1 = new Reserva(hospede, TipoQuarto.CONFORTO_01, hotel);
+        reserva1.solicitarReserva(LocalDate.of(2021, Month.SEPTEMBER, 20), LocalDate.of(2021, Month.SEPTEMBER, 21));
+
+        reserva2 = new Reserva(hospede, TipoQuarto.CONFORTO_01, hotel);
+        reserva2.solicitarReserva(LocalDate.of(2021, Month.SEPTEMBER, 26), LocalDate.of(2021, Month.SEPTEMBER, 28));
+
+        reserva3 = new Reserva(hospede, TipoQuarto.CONFORTO_01, hotel);
+        reserva3.solicitarReserva(LocalDate.of(2021, Month.OCTOBER, 20), LocalDate.of(2021, Month.OCTOBER, 25));
+
+        reservaInvalida = new Reserva(hospede, TipoQuarto.CONFORTO_01, hotel);
+        reservaInvalida.solicitarReserva(LocalDate.of(2021, Month.SEPTEMBER, 20), LocalDate.of(2021, Month.SEPTEMBER, 21));
+
+        hotel.adicionarQuarto(new Quarto(TipoQuarto.CONFORTO_01, hotel));
+        hotel.adicionarQuarto(new Quarto(TipoQuarto.CONFORTO_01, hotel));
+        hotel.adicionarQuarto(new Quarto(TipoQuarto.CONFORTO_01, hotel));
     }
 
     @DisplayName("Reservas do hotel deve ser igual a 0.")
@@ -95,5 +96,21 @@ public class HotelSpec {
         assertEquals("Não foi possível realizar a reserva para o periodo informado.", ex.getMessage());
     }
 
+    @DisplayName("Ao pesquisar por um quarto livre, deve trazer a primeira opção")
+    @Test
+    void shouldReturnQuarto() {
+        try {
+            Quarto quarto = hotel.getQuartoDisponivelFromTipo(TipoQuarto.CONFORTO_01);
+            assertNotNull(quarto, "Deve retornar um quarto.");
+        } catch (HotelariaException ex) {
+            fail(ex.getMessage());
+        }
+    }
 
+    @DisplayName("Ao pesquisar por um quarto livre, deve lançar uma exceção pois não existe quarto disponível")
+    @Test
+    void shouldThrowHotelariaExceptionWhenNoQuartoIsAvaliable() {
+        HotelariaException ex = assertThrows(HotelariaException.class, () -> hotel.getQuartoDisponivelFromTipo(TipoQuarto.CONFORTO_02));
+        assertNotNull(ex);
+    }
 }

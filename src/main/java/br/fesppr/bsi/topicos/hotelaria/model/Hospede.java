@@ -15,15 +15,6 @@ public class Hospede {
     private String email;
     private List<Reserva> reservas = new ArrayList<>();
 
-    public Hospede(String nome, String sobreNome, LocalDate dataNascimento, String cpf, String telefonePrincipal, String email) {
-        this.nome = nome;
-        this.sobreNome = sobreNome;
-        this.dataNascimento = dataNascimento;
-        this.cpf = cpf;
-        this.telefonePrincipal = telefonePrincipal;
-        this.email = email;
-    }
-
     public String getNome() {
         return nome;
     }

@@ -3,12 +3,10 @@ package br.fesppr.bsi.topicos.hotelaria.model;
 import br.fesppr.bsi.topicos.hotelaria.exceptions.HotelariaException;
 import br.fesppr.bsi.topicos.hotelaria.exceptions.ReservaException;
 import br.fesppr.bsi.topicos.hotelaria.model.enums.TipoQuarto;
-import br.fesppr.bsi.topicos.hotelaria.model.utils.pagamento.CartaoCredito;
 import br.fesppr.bsi.topicos.hotelaria.model.utils.pagamento.FormaPagamento;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +16,6 @@ public class Reserva {
     private LocalDate saida;
     private boolean precisaBerco;
     private BigDecimal valorReserva;
-    private LocalDateTime horaEntrada;
-    private LocalDateTime horaSaida;
     private boolean isCancelada;
     private TipoQuarto tipoQuarto;
     private Hospede hospede;
@@ -27,12 +23,13 @@ public class Reserva {
     private Hotel hotel;
     private List<Pagamento> pagamentos = new ArrayList<>();
 
-    public Reserva(Hospede hospede, TipoQuarto tipoQuarto) throws HotelariaException {
-        if (hospede != null) {
-            this.hospede = hospede;
-            this.tipoQuarto = tipoQuarto;
+    public Reserva(Hospede hospede, TipoQuarto tipoQuarto, Hotel hotel) throws HotelariaException {
+        if (hospede == null) {
+            throw new HotelariaException("Hospede não pode ser nulo.");
         }
-        throw new HotelariaException("Hospede não pode ser nulo.");
+        this.hospede = hospede;
+        this.tipoQuarto = tipoQuarto;
+        this.hotel = hotel;
     }
 
     public void solicitarReserva(LocalDate entrada, LocalDate saida) throws ReservaException {
@@ -43,12 +40,12 @@ public class Reserva {
             if (saida.isBefore(entrada)) {
                 throw new ReservaException("A data de saida não pode ser anterior a data de entrada.");
             }
-
             this.entrada = entrada;
             this.saida = saida;
             this.enviarEmailConfirmacao();
+        } else {
+            throw new ReservaException("Informe uma data de reserva válida.");
         }
-        throw new ReservaException("Informe uma data de reserva válida.");
     }
 
     public void solicitarBerco() {
@@ -57,21 +54,20 @@ public class Reserva {
 
     public void pagar(FormaPagamento formaPagamento) {
         // TODO fazer com que pagamento mínimo seja de 30% do valor da reserva
-        Pagamento pagamento = new Pagamento(formaPagamento);
-        pagamento.pagar(valorReserva);
+        Pagamento pagamento = new Pagamento(formaPagamento, this);
+        pagamento.pagar(this.valorReserva);
         this.pagamentos.add(pagamento);
     }
 
-    private void cancelarReserva() throws ReservaException {
-        if(this.estadia == null) {
+    public void cancelarReserva() throws ReservaException {
+        if (this.estadia == null) {
             this.isCancelada = true;
             // TODO - devolver pagamento
         }
         throw new ReservaException("Não é possível cancelar uma reserva após o checkin.");
     }
 
-    private void realizarCheckIn() {
-        this.horaEntrada = LocalDateTime.now();
+    public void realizarCheckIn() {
         this.estadia = new Estadia(this);
     }
 
@@ -93,18 +89,6 @@ public class Reserva {
 
     public BigDecimal getValorReserva() {
         return valorReserva;
-    }
-
-    public LocalDateTime getHoraEntrada() {
-        return horaEntrada;
-    }
-
-    public void setHoraSaida(LocalDateTime horaSaida) {
-        this.horaSaida = horaSaida;
-    }
-
-    public LocalDateTime getHoraSaida() {
-        return horaSaida;
     }
 
     public boolean isCancelada() {

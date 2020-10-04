@@ -11,10 +11,8 @@ public class Gasto {
     private boolean isCancelado;
     private Estadia estadia;
 
-    public Gasto(String descricao, LocalDateTime dataRequisicao, BigDecimal valor) {
-        this.descricao = descricao;
-        this.dataRequisicao = dataRequisicao;
-        this.valor = valor;
+    public Gasto() {
+        this.dataRequisicao = LocalDateTime.now();
     }
 
     public void cancelarServico() {
@@ -25,6 +23,10 @@ public class Gasto {
         return descricao;
     }
 
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
     public LocalDateTime getDataRequisicao() {
         return dataRequisicao;
     }
@@ -33,17 +35,21 @@ public class Gasto {
         return valor;
     }
 
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
+    }
+
     public boolean isCancelado() {
         return isCancelado;
+    }
+
+    public Estadia getEstadia() {
+        return estadia;
     }
 
     public void setEstadia(Estadia estadia) {
         if(estadia != null) {
             this.estadia = estadia;
         }
-    }
-
-    public Estadia getEstadia() {
-        return estadia;
     }
 }

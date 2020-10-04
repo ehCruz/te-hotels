@@ -1,5 +1,6 @@
 package hotelaria;
 
+import br.fesppr.bsi.topicos.hotelaria.model.Hotel;
 import br.fesppr.bsi.topicos.hotelaria.model.Quarto;
 import br.fesppr.bsi.topicos.hotelaria.model.enums.Disponibilidade;
 import br.fesppr.bsi.topicos.hotelaria.model.enums.TipoQuarto;
@@ -15,10 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class QuartoSpec {
 
     Quarto quarto;
+    Hotel hotel;
 
     @BeforeEach
     void init() {
-        quarto = new Quarto(TipoQuarto.CONFORTO_01);
+        hotel = new Hotel("HOTEL TESTE", "000000000");
+        quarto = new Quarto(TipoQuarto.CONFORTO_01, hotel);
     }
 
     @DisplayName("Quarto deve estar Disponivel na criação")

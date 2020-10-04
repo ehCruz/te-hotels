@@ -3,6 +3,7 @@ package hotelaria;
 import br.fesppr.bsi.topicos.hotelaria.exceptions.HotelariaException;
 import br.fesppr.bsi.topicos.hotelaria.exceptions.ReservaException;
 import br.fesppr.bsi.topicos.hotelaria.model.Hospede;
+import br.fesppr.bsi.topicos.hotelaria.model.Hotel;
 import br.fesppr.bsi.topicos.hotelaria.model.Reserva;
 import br.fesppr.bsi.topicos.hotelaria.model.enums.TipoQuarto;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,13 +22,24 @@ public class ReservaSpec {
 
     Reserva reserva;
     Hospede hospede;
+    Hotel hotel;
 
     @BeforeEach
     void init() {
         LocalDate nascimento = LocalDate.of(1995, Month.JUNE, 3);
-        hospede = new Hospede("Eduardo", "Cruz", nascimento, "09611848927", "41 99999999", "email@email.com");
+
+        hospede = new Hospede();
+        hospede.setNome("Eduardo");
+        hospede.setSobreNome("Cruz");
+        hospede.setDataNascimento(nascimento);
+        hospede.setCpf("09611848927");
+        hospede.setTelefonePrincipal("41 99999999");
+        hospede.setEmail("email@email.com");
+
+        hotel = new Hotel("HOTEL TESTE", "123456");
+
         try {
-            reserva = new Reserva(hospede, TipoQuarto.CONFORTO_01);
+            reserva = new Reserva(hospede, TipoQuarto.CONFORTO_01, hotel);
         } catch (Exception ignored) {
         }
     }
@@ -36,7 +48,7 @@ public class ReservaSpec {
     @Test
     void throwExceptionWhenHospedeIsNull() throws HotelariaException {
         hospede = null;
-        HotelariaException ex = assertThrows(HotelariaException.class, () -> new Reserva(hospede, null));
+        HotelariaException ex = assertThrows(HotelariaException.class, () -> new Reserva(hospede, null, hotel));
         assertEquals("Hospede não pode ser nulo.", ex.getMessage());
     }
 

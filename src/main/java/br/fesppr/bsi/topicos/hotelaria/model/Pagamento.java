@@ -9,10 +9,12 @@ public class Pagamento {
 
     private LocalDateTime dataPagamento;
     private BigDecimal valorPago;
-    private FormaPagamento formaPagamento;
+    private final FormaPagamento formaPagamento;
+    private final Reserva reserva;
 
-    public Pagamento(FormaPagamento formaPagamento) {
+    public Pagamento(FormaPagamento formaPagamento, Reserva reserva) {
         this.formaPagamento = formaPagamento;
+        this.reserva = reserva;
     }
 
     public void pagar(BigDecimal valor) {
@@ -31,5 +33,9 @@ public class Pagamento {
 
     public FormaPagamento getFormaPagamento() {
         return formaPagamento;
+    }
+
+    public Reserva getReserva() {
+        return reserva;
     }
 }

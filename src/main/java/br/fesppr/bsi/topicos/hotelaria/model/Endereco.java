@@ -8,17 +8,6 @@ public class Endereco {
     private String cidade;
     private String estado;
     private String pais;
-    private final Hotel hotel;
-
-    public Endereco(String rua, String cep, String bairro, String cidade, String estado, String pais, Hotel hotel) {
-        this.rua = rua;
-        this.cep = cep;
-        this.bairro = bairro;
-        this.cidade = cidade;
-        this.estado = estado;
-        this.pais = pais;
-        this.hotel = hotel;
-    }
 
     public String getRua() {
         return rua;

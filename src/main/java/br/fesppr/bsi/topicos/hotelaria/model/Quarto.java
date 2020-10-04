@@ -5,11 +5,13 @@ import br.fesppr.bsi.topicos.hotelaria.model.enums.TipoQuarto;
 
 public class Quarto {
 
-    private Boolean hasBerco = false;
-    private TipoQuarto tipoQuarto;
+    private boolean hasBerco;
     private Disponibilidade disponibilidade = Disponibilidade.DISPONIVEL;
+    private final TipoQuarto tipoQuarto;
+    private final Hotel hotel;
 
-    public Quarto(TipoQuarto tipoQuarto) {
+    public Quarto(TipoQuarto tipoQuarto, Hotel hotel) {
+        this.hotel = hotel;
         this.tipoQuarto = tipoQuarto;
     }
 
@@ -58,5 +60,9 @@ public class Quarto {
 
     public TipoQuarto getTipoQuarto() {
         return tipoQuarto;
+    }
+
+    public Hotel getHotel() {
+        return hotel;
     }
 }
