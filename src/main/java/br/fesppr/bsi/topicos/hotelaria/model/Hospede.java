@@ -6,72 +6,97 @@ import java.util.List;
 
 public class Hospede {
 
-    private String nome;
-    private String sobreNome;
-    private LocalDate dataNascimento;
-    private String cpf;
-    private String telefonePrincipal;
-    private String telefoneSecundario;
-    private String email;
-    private List<Reserva> reservas = new ArrayList<>();
+	private String nome;
+	private LocalDate dataNascimento;
+	private String cpf;
+	private String telefonePrincipal;
+	private String telefoneSecundario;
+	private String email;
 
-    public String getNome() {
-        return nome;
-    }
+	private Dependente dependente;
+	private List<Reserva> reservas = new ArrayList<>();
+	private Endereco endereco;
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+	public Hospede(Endereco endereco) {
+		this.endereco = endereco;
+	}
 
-    public String getSobreNome() {
-        return sobreNome;
-    }
+	public void liberarPermissaoDependente(Hospede dependente) {
+		dependente.getDependente().setPermissao(true);
+	}
 
-    public void setSobreNome(String sobreNome) {
-        this.sobreNome = sobreNome;
-    }
+	public void removerPermissaoDependente(Hospede dependente) {
+		dependente.getDependente().setPermissao(false);
+	}
 
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
-    }
+	public String getNome() {
+		return nome;
+	}
 
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 
-    public String getCpf() {
-        return cpf;
-    }
+	public LocalDate getDataNascimento() {
+		return dataNascimento;
+	}
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
+	public void setDataNascimento(LocalDate dataNascimento) {
+		this.dataNascimento = dataNascimento;
+	}
 
-    public String getTelefonePrincipal() {
-        return telefonePrincipal;
-    }
+	public String getCpf() {
+		return cpf;
+	}
 
-    public void setTelefonePrincipal(String telefonePrincipal) {
-        this.telefonePrincipal = telefonePrincipal;
-    }
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
 
-    public String getTelefoneSecundario() {
-        return telefoneSecundario;
-    }
+	public String getTelefonePrincipal() {
+		return telefonePrincipal;
+	}
 
-    public void setTelefoneSecundario(String telefoneSecundario) {
-        this.telefoneSecundario = telefoneSecundario;
-    }
+	public void setTelefonePrincipal(String telefonePrincipal) {
+		this.telefonePrincipal = telefonePrincipal;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public String getTelefoneSecundario() {
+		return telefoneSecundario;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public void setTelefoneSecundario(String telefoneSecundario) {
+		this.telefoneSecundario = telefoneSecundario;
+	}
 
-    public List<Reserva> getReservas() {
-        return reservas;
-    }
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public List<Reserva> getReservas() {
+		return reservas;
+	}
+
+	public Dependente getDependente() {
+		return dependente;
+	}
+
+	public void setDependente(Dependente dependente) {
+		this.dependente = dependente;
+	}
+
+	public Endereco getEndereco() {
+		return endereco;
+	}
+
+	public void setEndereco(Endereco endereco) {
+		if (endereco != null) {
+			this.endereco = endereco;
+		}
+	}
+
 }

@@ -8,7 +8,8 @@ public class Gasto {
     private String descricao;
     private LocalDateTime dataRequisicao;
     private BigDecimal valor;
-    private boolean isCancelado;
+    private boolean cancelado;
+    
     private Estadia estadia;
 
     public Gasto() {
@@ -16,7 +17,7 @@ public class Gasto {
     }
 
     public void cancelarServico() {
-        this.isCancelado = true;
+        this.cancelado = true;
     }
 
     public String getDescricao() {
@@ -40,7 +41,7 @@ public class Gasto {
     }
 
     public boolean isCancelado() {
-        return isCancelado;
+        return cancelado;
     }
 
     public Estadia getEstadia() {

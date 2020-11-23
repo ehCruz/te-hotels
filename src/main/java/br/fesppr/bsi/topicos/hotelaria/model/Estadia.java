@@ -1,60 +1,62 @@
 package br.fesppr.bsi.topicos.hotelaria.model;
 
 import br.fesppr.bsi.topicos.hotelaria.exceptions.HotelariaException;
+import br.fesppr.bsi.topicos.hotelaria.model.enums.TipoRefeicao;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Estadia {
 
-    private LocalDateTime horaEntrada;
-    private LocalDateTime horaSaida;
-    private Reserva reserva;
-    private Quarto quarto;
-    private List<Gasto> gastos = new ArrayList<>();
+	private LocalTime entrada;
+	private LocalTime saida;
 
-    public Estadia(Reserva reserva) {
-        this.reserva = reserva;
-        this.horaEntrada = LocalDateTime.now();
-        this.ocuparQuarto();
-    }
+	private Reserva reserva;
+	private Quarto quarto;
+	private List<Gasto> gastos = new ArrayList<>();
+	private List<TipoRefeicao> refeicoes = new ArrayList<>();
 
-    public void realizarCheckOut() {
-        this.quarto.chekOut();
-        this.horaSaida = LocalDateTime.now();
-        // TODO pagamento
-    }
+	public Estadia(Reserva reserva) {
+		this.reserva = reserva;
+		this.entrada = LocalTime.now();
+		this.ocuparQuarto();
+	}
 
-    public void adicionarGasto(Gasto gasto) {
-        if (gasto != null) {
-            gasto.setEstadia(this);
-            this.gastos.add(gasto);
-        }
-    }
+	public void realizarCheckOut() {
+		this.quarto.chekOut();
+		this.saida = LocalTime.now();
+		// TODO pagamento
+	}
 
-    private void ocuparQuarto() {
-        try {
-            this.quarto = this.reserva.getHotel().getQuartoDisponivelFromTipo(reserva.getTipoQuarto());
-            this.quarto.ocupar();
-        } catch (HotelariaException ex) {
-            // TODO tratar excecao
-        }
-    }
+	public void adicionarGasto(Gasto gasto) {
+		if (gasto != null) {
+			gasto.setEstadia(this);
+			this.gastos.add(gasto);
+		}
+	}
 
-    public LocalDateTime getHoraEntrada() {
-        return horaEntrada;
-    }
+	private void ocuparQuarto() {
+		try {
+			this.quarto = this.reserva.getHotel().getQuartoDisponivelFromTipo(reserva.getTipoQuarto());
+			this.quarto.ocupar();
+		} catch (HotelariaException ex) {
+			// TODO tratar excecao
+		}
+	}
 
-    public void setHoraEntrada(LocalDateTime horaEntrada) {
-        this.horaEntrada = horaEntrada;
-    }
+	public void novaRefeicao(TipoRefeicao refeicao) {
+		if (refeicao != null) {
+			this.refeicoes.add(refeicao);
+		}
+	}
 
-    public LocalDateTime getHoraSaida() {
-        return horaSaida;
-    }
+	public LocalTime getEntrada() {
+		return entrada;
+	}
 
-    public void setHoraSaida(LocalDateTime horaSaida) {
-        this.horaSaida = horaSaida;
-    }
+	public LocalTime getSaida() {
+		return saida;
+	}
+
 }

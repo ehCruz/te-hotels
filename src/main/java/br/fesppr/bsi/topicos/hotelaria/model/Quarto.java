@@ -2,21 +2,24 @@ package br.fesppr.bsi.topicos.hotelaria.model;
 
 import br.fesppr.bsi.topicos.hotelaria.model.enums.Disponibilidade;
 import br.fesppr.bsi.topicos.hotelaria.model.enums.TipoQuarto;
+import br.fesppr.bsi.topicos.hotelaria.model.enums.TipoServico;
 
 public class Quarto {
 
-    private boolean hasBerco;
+    private boolean berco;
+    
     private Disponibilidade disponibilidade = Disponibilidade.DISPONIVEL;
-    private final TipoQuarto tipoQuarto;
-    private final Hotel hotel;
+    private TipoQuarto tipoQuarto;
+    private Hotel hotel;
+    private Servico servico;
 
     public Quarto(TipoQuarto tipoQuarto, Hotel hotel) {
         this.hotel = hotel;
         this.tipoQuarto = tipoQuarto;
     }
 
-    public Boolean getHasBerco() {
-        return hasBerco;
+    public Boolean hasBerco() {
+        return berco;
     }
 
     public Disponibilidade getDisponibilidade() {
@@ -24,7 +27,7 @@ public class Quarto {
     }
 
     public void adicionarBerco() {
-        this.hasBerco = true;
+        this.berco = true;
     }
 
     public void ocupar() {
@@ -41,8 +44,9 @@ public class Quarto {
 
     public void chekOut() {
         if (Disponibilidade.OCUPADO.equals(this.disponibilidade)) {
-            this.hasBerco = false;
+            this.berco = false;
             this.disponibilidade = Disponibilidade.INDISPONIVEL;
+            this.servicoQuarto(TipoServico.HIGIENE);
         }
     }
 
@@ -56,6 +60,12 @@ public class Quarto {
         if (Disponibilidade.INDISPONIVEL.equals(this.disponibilidade) || Disponibilidade.FECHADO.equals(this.disponibilidade)) {
             this.disponibilidade = Disponibilidade.DISPONIVEL;
         }
+    }
+    
+    public void servicoQuarto(TipoServico tipoServico) {
+    	this.servico = new Servico(tipoServico);
+        this.servico.setQuarto(this);
+        this.servico.solicitarServicoDeQuarto();
     }
 
     public TipoQuarto getTipoQuarto() {

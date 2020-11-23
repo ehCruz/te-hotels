@@ -3,7 +3,8 @@ package br.fesppr.bsi.topicos.hotelaria.model;
 import br.fesppr.bsi.topicos.hotelaria.exceptions.HotelariaException;
 import br.fesppr.bsi.topicos.hotelaria.exceptions.ReservaException;
 import br.fesppr.bsi.topicos.hotelaria.model.enums.TipoQuarto;
-import br.fesppr.bsi.topicos.hotelaria.model.utils.pagamento.FormaPagamento;
+import br.fesppr.bsi.topicos.hotelaria.model.enums.TipoRefeicao;
+import br.fesppr.bsi.topicos.hotelaria.pagamento.model.Pagamento;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,107 +13,125 @@ import java.util.List;
 
 public class Reserva {
 
-    private LocalDate entrada;
-    private LocalDate saida;
-    private boolean precisaBerco;
-    private BigDecimal valorReserva;
-    private boolean isCancelada;
-    private TipoQuarto tipoQuarto;
-    private Hospede hospede;
-    private Estadia estadia;
-    private Hotel hotel;
-    private List<Pagamento> pagamentos = new ArrayList<>();
+	private LocalDate entrada;
+	private LocalDate saida;
+	private boolean precisaBerco;
+	private BigDecimal valorReserva;
+	private boolean cancelado;
 
-    public Reserva(Hospede hospede, TipoQuarto tipoQuarto, Hotel hotel) throws HotelariaException {
-        if (hospede == null) {
-            throw new HotelariaException("Hospede não pode ser nulo.");
-        }
-        this.hospede = hospede;
-        this.tipoQuarto = tipoQuarto;
-        this.hotel = hotel;
-    }
+	private TipoQuarto tipoQuarto;
+	private Hospede titular;
+	private List<Hospede> dependentes = new ArrayList<>();
+	private Estadia estadia;
+	private Hotel hotel;
+	private List<Pagamento> pagamentos = new ArrayList<>();
+	private List<TipoRefeicao> refeicoes = new ArrayList<>();
 
-    public void solicitarReserva(LocalDate entrada, LocalDate saida) throws ReservaException {
-        if (entrada != null && saida != null) {
-            if (entrada.isBefore(LocalDate.now())) {
-                throw new ReservaException("A data de entrada não pode ser anterior a data atual.");
-            }
-            if (saida.isBefore(entrada)) {
-                throw new ReservaException("A data de saida não pode ser anterior a data de entrada.");
-            }
-            this.entrada = entrada;
-            this.saida = saida;
-            this.enviarEmailConfirmacao();
-        } else {
-            throw new ReservaException("Informe uma data de reserva válida.");
-        }
-    }
+	public Reserva(Hospede titular, TipoQuarto tipoQuarto, Hotel hotel) throws HotelariaException {
+		if (titular == null) {
+			throw new HotelariaException("Hospede não pode ser nulo.");
+		}
+		this.titular = titular;
+		this.tipoQuarto = tipoQuarto;
+		this.hotel = hotel;
+	}
 
-    public void solicitarBerco() {
-        this.precisaBerco = true;
-    }
+	public void solicitarReserva(LocalDate entrada, LocalDate saida) throws ReservaException {
+		if (entrada != null && saida != null) {
+			if (entrada.isBefore(LocalDate.now())) {
+				throw new ReservaException("A data de entrada não pode ser anterior a data atual.");
+			}
+			if (saida.isBefore(entrada)) {
+				throw new ReservaException("A data de saida não pode ser anterior a data de entrada.");
+			}
+			this.entrada = entrada;
+			this.saida = saida;
+			this.enviarEmailConfirmacao();
+		} else {
+			throw new ReservaException("Informe uma data de reserva válida.");
+		}
+	}
 
-    public void pagar(FormaPagamento formaPagamento) {
-        // TODO fazer com que pagamento mínimo seja de 30% do valor da reserva
-        Pagamento pagamento = new Pagamento(formaPagamento, this);
-        pagamento.pagar(this.valorReserva);
-        this.pagamentos.add(pagamento);
-    }
+	public void solicitarBerco() {
+		this.precisaBerco = true;
+	}
 
-    public void cancelarReserva() throws ReservaException {
-        if (this.estadia == null) {
-            this.isCancelada = true;
-            // TODO - devolver pagamento
-        }
-        throw new ReservaException("Não é possível cancelar uma reserva após o checkin.");
-    }
+	public void pagar(Pagamento formaPagamento) {
+		// TODO fazer com que pagamento mínimo seja de 30% do valor da reserva
+		formaPagamento.setReserva(this);
+		formaPagamento.pagar(this.valorReserva);
+		this.pagamentos.add(formaPagamento);
+	}
 
-    public void realizarCheckIn() {
-        this.estadia = new Estadia(this);
-    }
+	public void cancelarReserva() throws ReservaException {
+		if (this.estadia == null) {
+			this.cancelado = true;
+			// TODO - devolver pagamento
+		}
+		throw new ReservaException("Não é possível cancelar uma reserva após o checkin.");
+	}
 
-    private void enviarEmailConfirmacao() {
-        // TODO - envio de email
-    }
+	public void realizarCheckIn() {
+		this.estadia = new Estadia(this);
+	}
 
-    public LocalDate getEntrada() {
-        return entrada;
-    }
+	public void adicionarDependente(Hospede dependente) {
+		if (dependente != null) {
+			dependente.getDependente().setPermissao(false);
+			this.dependentes.add(dependente);
+		}
+	}
 
-    public LocalDate getSaida() {
-        return saida;
-    }
+	private void enviarEmailConfirmacao() {
+		// TODO - envio de email
+	}
 
-    public boolean isPrecisaBerco() {
-        return precisaBerco;
-    }
+	public LocalDate getEntrada() {
+		return entrada;
+	}
 
-    public BigDecimal getValorReserva() {
-        return valorReserva;
-    }
+	public LocalDate getSaida() {
+		return saida;
+	}
 
-    public boolean isCancelada() {
-        return isCancelada;
-    }
+	public boolean isPrecisaBerco() {
+		return precisaBerco;
+	}
 
-    public TipoQuarto getTipoQuarto() {
-        return tipoQuarto;
-    }
+	public BigDecimal getValorReserva() {
+		return valorReserva;
+	}
 
-    public Hospede getHospede() {
-        return hospede;
-    }
+	public boolean isCancelada() {
+		return cancelado;
+	}
 
-    public Estadia getEstadia() {
-        return estadia;
-    }
+	public TipoQuarto getTipoQuarto() {
+		return tipoQuarto;
+	}
 
-    public Hotel getHotel() {
-        return hotel;
-    }
+	public Hospede getTitular() {
+		return titular;
+	}
 
-    public List<Pagamento> getPagamentos() {
-        return pagamentos;
-    }
+	public Estadia getEstadia() {
+		return estadia;
+	}
+
+	public Hotel getHotel() {
+		return hotel;
+	}
+
+	public List<Pagamento> getPagamentos() {
+		return pagamentos;
+	}
+
+	public List<TipoRefeicao> getRefeicoes() {
+		return refeicoes;
+	}
+
+	public List<Hospede> getDependentes() {
+		return dependentes;
+	}
 
 }
